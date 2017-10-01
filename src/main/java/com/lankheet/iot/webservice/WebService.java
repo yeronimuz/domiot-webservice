@@ -1,12 +1,11 @@
 package com.lankheet.iot.webservice;
 
-import javax.persistence.EntityManagerFactory;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.lankheet.iot.webservice.config.WebServiceConfig;
 import com.lankheet.iot.webservice.health.DatabaseHealthCheck;
+import com.lankheet.iot.webservice.health.MqttConnectionHealthCheck;
 
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
@@ -37,14 +36,15 @@ public class WebService extends Application<WebServiceConfig> {
 
 	@Override
 	public void run(WebServiceConfig configuration, Environment environment) throws Exception {
-		MqttClientManager mqttClientManager = new MqttClientManager(configuration.getMqttConfig());
 		DatabaseManager dbManager = new DatabaseManager(configuration.getDatabaseConfig());
-		
+		MqttClientManager mqttClientManager = new MqttClientManager(configuration.getMqttConfig(), dbManager);
+
 		environment.getApplicationContext().setContextPath("/api");
 		environment.lifecycle().manage(mqttClientManager);
 		environment.lifecycle().manage(dbManager);
 		// environment.jersey().register(measurementsResource);
 		environment.healthChecks().register("database", new DatabaseHealthCheck(dbManager.getEntityManagerFactory()));
+		environment.healthChecks().register("mqtt-server", new MqttConnectionHealthCheck(mqttClientManager));
 	}
 
 }

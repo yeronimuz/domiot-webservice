@@ -26,8 +26,12 @@ public class DatabaseManager implements Managed, DaoListener {
 	@Override
 	public void start() throws Exception {
 		Map<String, String> properties = new HashMap<String, String>();
+		properties.put("javax.persistence.jdbc.driver", dbConfig.getDriver());
+		properties.put("javax.persistence.jdbc.url", dbConfig.getUrl());
+		properties.put("javax.persistence.jdbc.user", dbConfig.getUserName());
+		properties.put("javax.persistence.jdbc.password", dbConfig.getPassword());
 		
-		emf = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT);
+		emf = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT, properties);
 		em = emf.createEntityManager();
 		
 	}

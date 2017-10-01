@@ -1,12 +1,11 @@
 package com.lankheet.iot.webservice.health;
 
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 
 import com.codahale.metrics.health.HealthCheck;
+import com.lankheet.iot.datatypes.Measurement;
 
 public class DatabaseHealthCheck extends HealthCheck {
 	private EntityManagerFactory emf;
@@ -16,17 +15,15 @@ public class DatabaseHealthCheck extends HealthCheck {
 	}
 
 	@Override
-	protected Result check() throws Exception {
-		int size;
+	protected Result check() {
 		try {
 			EntityManager em = emf.createEntityManager();
-			Query query = em.createQuery("SELECT * from Measurements m");
-			List<String> list = query.getResultList();
-			size = list.size();
-		} catch (IllegalStateException ex) {
+			Query query = em.createQuery("SELECT m from Measurements m");
+			Measurement meas = (Measurement) query.setFirstResult(0).setMaxResults(1).getSingleResult();
+		} catch (Exception ex) {
 			return Result.unhealthy(ex);
 		}
-		return Result.healthy("Nr of measurements: {}", size);
+		return Result.healthy("Healthy");
 	}
 
 }

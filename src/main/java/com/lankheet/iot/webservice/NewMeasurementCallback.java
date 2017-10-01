@@ -15,8 +15,9 @@ public class NewMeasurementCallback implements MqttCallback {
 	private MqttClientManager mqttClientManager;
 	private DaoListener daoListener;
 
-	public NewMeasurementCallback(MqttClientManager mqttClientManager) {
+	public NewMeasurementCallback(MqttClientManager mqttClientManager, DaoListener dao) {
 		this.mqttClientManager = mqttClientManager;
+		this.daoListener = dao;
 	}
 
 	@Override
@@ -34,7 +35,7 @@ public class NewMeasurementCallback implements MqttCallback {
 		LOG.info("Topic: {}, message: {}",topic, message.toString());
 		String payload = message.getPayload().toString();
 		Measurement measurement = JsonUtil.measurementFromJson(payload);
-
+		daoListener.newMeasurement(measurement);
 	}
 
 	@Override

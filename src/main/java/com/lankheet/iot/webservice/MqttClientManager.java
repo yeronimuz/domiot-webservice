@@ -22,12 +22,12 @@ public class MqttClientManager implements Managed {
 	private MqttClient client;
 	private final MqttConnectOptions options = new MqttConnectOptions();;
 
-	public MqttClientManager(MqttConfig mqttConfig) throws MqttException {
+	public MqttClientManager(MqttConfig mqttConfig, DaoListener dao) throws MqttException {
 		String userName = mqttConfig.getUserName();
 		String password = mqttConfig.getPassword();
 		client = new MqttClient(mqttConfig.getUrl(), MqttClient.generateClientId());
 		
-		client.setCallback(new NewMeasurementCallback(this));
+		client.setCallback(new NewMeasurementCallback(this, dao));
 		MqttConnectOptions options = new MqttConnectOptions();
 		options.setConnectionTimeout(60);
 		options.setKeepAliveInterval(60);
