@@ -2,17 +2,17 @@ package com.lankheet.iot.webservice;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import com.lankheet.iot.datatypes.Measurement;
 import com.lankheet.iot.webservice.config.DatabaseConfig;
-
 import io.dropwizard.lifecycle.Managed;
 
 public class DatabaseManager implements Managed, DaoListener {
+    private static final Logger LOG = LogManager.getLogger(DatabaseManager.class);
 
 	private static final String PERSISTENCE_UNIT = "meas-pu";
 	private DatabaseConfig dbConfig;
@@ -33,7 +33,6 @@ public class DatabaseManager implements Managed, DaoListener {
 		
 		emf = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT, properties);
 		em = emf.createEntityManager();
-		
 	}
 
 	@Override
@@ -44,6 +43,7 @@ public class DatabaseManager implements Managed, DaoListener {
 
 	@Override
 	public void newMeasurement(Measurement measurement) {
+	    LOG.info("Storing: " + measurement.toString() );
 		em.getTransaction().begin();
 		em.persist(measurement);
 		em.getTransaction().commit();

@@ -1,7 +1,6 @@
 package com.lankheet.iot.webservice.config;
 
 import org.hibernate.validator.constraints.NotEmpty;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class MqttConfig {

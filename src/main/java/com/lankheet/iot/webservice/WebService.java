@@ -2,11 +2,9 @@ package com.lankheet.iot.webservice;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import com.lankheet.iot.webservice.config.WebServiceConfig;
 import com.lankheet.iot.webservice.health.DatabaseHealthCheck;
 import com.lankheet.iot.webservice.health.MqttConnectionHealthCheck;
-
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -20,6 +18,8 @@ import io.dropwizard.setup.Environment;
  */
 public class WebService extends Application<WebServiceConfig> {
 	private static final Logger LOG = LogManager.getLogger(WebService.class);
+	
+	private WebServiceConfig configuration;
 
 	public static void main(String[] args) throws Exception {
 		if (args.length != 2) {
@@ -36,6 +36,7 @@ public class WebService extends Application<WebServiceConfig> {
 
 	@Override
 	public void run(WebServiceConfig configuration, Environment environment) throws Exception {
+	    this.setConfiguration(configuration);
 		DatabaseManager dbManager = new DatabaseManager(configuration.getDatabaseConfig());
 		MqttClientManager mqttClientManager = new MqttClientManager(configuration.getMqttConfig(), dbManager);
 
@@ -47,4 +48,11 @@ public class WebService extends Application<WebServiceConfig> {
 		environment.healthChecks().register("mqtt-server", new MqttConnectionHealthCheck(mqttClientManager));
 	}
 
+    public WebServiceConfig getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(WebServiceConfig configuration) {
+        this.configuration = configuration;
+    }
 }

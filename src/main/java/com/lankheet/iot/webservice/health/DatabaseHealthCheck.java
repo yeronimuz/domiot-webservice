@@ -3,7 +3,6 @@ package com.lankheet.iot.webservice.health;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
-
 import com.codahale.metrics.health.HealthCheck;
 import com.lankheet.iot.datatypes.Measurement;
 

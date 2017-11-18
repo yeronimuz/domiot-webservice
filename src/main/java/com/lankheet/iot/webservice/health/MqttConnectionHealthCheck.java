@@ -1,7 +1,6 @@
 package com.lankheet.iot.webservice.health;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
-
 import com.codahale.metrics.health.HealthCheck;
 import com.lankheet.iot.webservice.MqttClientManager;
 
