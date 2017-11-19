@@ -1,6 +1,7 @@
 package com.lankheet.iot.webservice;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -9,6 +10,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import com.lankheet.iot.datatypes.Measurement;
 import com.lankheet.iot.webservice.config.DatabaseConfig;
+import com.lankheet.iot.webservice.dao.DaoListener;
 import io.dropwizard.lifecycle.Managed;
 
 public class DatabaseManager implements Managed, DaoListener {
@@ -43,13 +45,14 @@ public class DatabaseManager implements Managed, DaoListener {
 
 	@Override
 	public void newMeasurement(Measurement measurement) {
-	    LOG.info("Storing: " + measurement.toString() );
+	    LOG.info("Storing: " + measurement.toString());
 		em.getTransaction().begin();
 		em.persist(measurement);
 		em.getTransaction().commit();
 	}
 	
-	protected EntityManagerFactory getEntityManagerFactory() {
-		return emf;
-	}
+    @Override
+    public List<Measurement> getMeasurements() {
+        return em.createQuery("SELECT e FROM measurements e").getResultList();
+    }
 }

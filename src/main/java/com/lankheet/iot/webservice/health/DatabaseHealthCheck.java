@@ -1,28 +1,24 @@
 package com.lankheet.iot.webservice.health;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
+import java.util.List;
 import com.codahale.metrics.health.HealthCheck;
 import com.lankheet.iot.datatypes.Measurement;
+import com.lankheet.iot.webservice.DatabaseManager;
 
 public class DatabaseHealthCheck extends HealthCheck {
-	private EntityManagerFactory emf;
+	private DatabaseManager dbManager;
 
-	public DatabaseHealthCheck(EntityManagerFactory emf) {
-		this.emf = emf;
+	public DatabaseHealthCheck(DatabaseManager dbManager) {
+		this.dbManager = dbManager;
 	}
 
 	@Override
 	protected Result check() {
-		try {
-			EntityManager em = emf.createEntityManager();
-			Query query = em.createQuery("SELECT m from Measurements m");
-			Measurement meas = (Measurement) query.setFirstResult(0).setMaxResults(1).getSingleResult();
-		} catch (Exception ex) {
-			return Result.unhealthy(ex);
+	    Result result = Result.unhealthy("Nothing retrieved from database");
+	    List<Measurement> measList = dbManager.getMeasurements();
+	    if (measList.size() > 0) {
+			result =  Result.healthy("Healthy");
 		}
-		return Result.healthy("Healthy");
+		return result;
 	}
-
 }

@@ -8,6 +8,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import com.lankheet.iot.webservice.config.MqttConfig;
+import com.lankheet.iot.webservice.dao.DaoListener;
 import io.dropwizard.lifecycle.Managed;
 
 /**
