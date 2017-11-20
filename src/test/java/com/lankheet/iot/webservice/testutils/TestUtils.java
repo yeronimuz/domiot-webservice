@@ -9,7 +9,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 import com.lankheet.iot.datatypes.Measurement;
-import com.lankheet.iot.webservice.utils.JsonUtil;
+import com.lankheet.utils.JsonUtil;
 
 public class TestUtils {
     private static final Logger LOG = LogManager.getLogger(TestUtils.class);

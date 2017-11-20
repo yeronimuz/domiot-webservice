@@ -9,7 +9,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.lankheet.iot.datatypes.Measurement;
 import com.lankheet.iot.webservice.dao.DaoListener;
-import com.lankheet.iot.webservice.utils.JsonUtil;
+import com.lankheet.utils.JsonUtil;
 
 public class NewMeasurementCallback implements MqttCallback {
     private static final Logger LOG = LogManager.getLogger(NewMeasurementCallback.class);
