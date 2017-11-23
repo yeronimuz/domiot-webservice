@@ -8,6 +8,7 @@ import com.lankheet.iot.webservice.health.MqttConnectionHealthCheck;
 import com.lankheet.iot.webservice.resources.MeasurementsResource;
 import com.lankheet.iot.webservice.resources.WebServiceInfo;
 import com.lankheet.iot.webservice.resources.WebServiceInfoResource;
+import com.lankheet.utils.TcpPortUtil;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -21,6 +22,9 @@ import io.dropwizard.setup.Environment;
  */
 public class WebService extends Application<WebServiceConfig> {
     private static final Logger LOG = LogManager.getLogger(WebService.class);
+    private static final int TIMEOUT_FOR_PORTSCAN = 200;
+    private static final int DEFAULT_MQTT_PORT = 1883;
+    private static final String DEFAULT_MQTT_HOST = "localhost";
 
     private WebServiceConfig configuration;
 
@@ -40,6 +44,12 @@ public class WebService extends Application<WebServiceConfig> {
     @Override
     public void run(WebServiceConfig configuration, Environment environment) throws Exception {
         this.setConfiguration(configuration);
+        if (!TcpPortUtil.isPortOpen(DEFAULT_MQTT_HOST, DEFAULT_MQTT_PORT, TIMEOUT_FOR_PORTSCAN)) {
+            LOG.fatal("Mqtt port not accessible");
+            System.exit(-1);
+        } else {
+            LOG.info("MQTT port available");
+        }
         DatabaseManager dbManager = new DatabaseManager(configuration.getDatabaseConfig());
         MqttClientManager mqttClientManager = new MqttClientManager(configuration.getMqttConfig(), dbManager);
         WebServiceInfoResource webServiceInfoResource = new WebServiceInfoResource(new WebServiceInfo());

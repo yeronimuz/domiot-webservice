@@ -27,7 +27,6 @@ public class MqttClientManager implements Managed {
         client = new MqttClient(mqttConfig.getUrl(), MqttClient.generateClientId());
 
         client.setCallback(new NewMeasurementCallback(this, dao));
-        MqttConnectOptions options = new MqttConnectOptions();
         options.setConnectionTimeout(60);
         options.setKeepAliveInterval(60);
         options.setUserName(userName);
@@ -52,7 +51,7 @@ public class MqttClientManager implements Managed {
     public void start() throws Exception {
         LOG.info("Connecting mqtt broker with options: {}", options);;
         client.connect(options);
-        client.subscribe("test", 0);
+        client.subscribe("#", 0);
     }
 
     @Override

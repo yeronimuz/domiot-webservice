@@ -45,7 +45,7 @@ publishing {
 }
 
 task bigJar(type: OneJar) {
-    mainClass = 'com.lankheet.iot.IOTApplication'
+    mainClass = 'com.lankheet.iot.webservice.WebService'
     manifest {
         attributes 'Implementation-Title': 'IOT-Webservice',
                    'Implementation-Version': version,
