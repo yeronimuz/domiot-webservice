@@ -15,7 +15,7 @@ public class DatabaseHealthCheck extends HealthCheck {
 	@Override
 	protected Result check() {
 	    Result result = Result.unhealthy("Nothing retrieved from database");
-	    List<Measurement> measList = dbManager.getMeasurements();
+	    List<Measurement> measList = dbManager.getMeasurementsBySensor(1);
 	    if (measList.size() > 0) {
 			result =  Result.healthy("Healthy");
 		}

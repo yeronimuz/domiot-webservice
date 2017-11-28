@@ -49,7 +49,7 @@ public class MqttClientManager implements Managed {
 
     @Override
     public void start() throws Exception {
-        LOG.info("Connecting mqtt broker with options: {}", options);;
+        LOG.info("Connecting mqtt broker with options: {}", options);
         client.connect(options);
         client.subscribe("#", 0);
     }
