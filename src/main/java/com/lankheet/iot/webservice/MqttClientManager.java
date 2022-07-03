@@ -1,25 +1,24 @@
 package com.lankheet.iot.webservice;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.lankheet.iot.webservice.config.MqttConfig;
+import com.lankheet.iot.webservice.dao.DaoListener;
+import io.dropwizard.lifecycle.Managed;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
-import com.lankheet.iot.webservice.config.MqttConfig;
-import com.lankheet.iot.webservice.dao.DaoListener;
-import io.dropwizard.lifecycle.Managed;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * MQTT client manager that subscribes to the domotics topics.
  *
  */
 public class MqttClientManager implements Managed {
-    private static final Logger LOG = LogManager.getLogger(MqttClientManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MqttClientManager.class);
 
-    private MqttClient client;
-    private final MqttConnectOptions options = new MqttConnectOptions();;
+    private final MqttClient         client;
+    private final MqttConnectOptions options = new MqttConnectOptions();
 
     public MqttClientManager(MqttConfig mqttConfig, DaoListener dao) throws MqttException {
         String userName = mqttConfig.getUserName();
@@ -34,16 +33,13 @@ public class MqttClientManager implements Managed {
     }
 
     /**
-     * TODO: This method should be triggered by the database command table change in order to configure
-     * clients.<BR>
+     * TODO: This method should be triggered by the database command table change in order to configure clients.<BR>
      * Possible commands: Command to switch something, Config to set a (set of) parameter(s), Measure:
      * Invoke a sensor to generate a new measurement
      * 
      * @param topic The command topic {CMD, CONFIG, MEASURE}
-     * @throws MqttPersistenceException
-     * @throws MqttException
      */
-    public void publish(String topic, MqttMessage message) throws MqttPersistenceException, MqttException {
+    public void publish(String topic, MqttMessage message) throws MqttException {
         client.publish(topic, message);
     }
 

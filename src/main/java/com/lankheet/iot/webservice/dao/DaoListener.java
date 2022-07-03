@@ -1,7 +1,8 @@
 package com.lankheet.iot.webservice.dao;
 
+import com.lankheet.iot.datatypes.entities.Measurement;
+
 import java.util.List;
-import com.lankheet.iot.datatypes.Measurement;
 
 public interface DaoListener {
     /**

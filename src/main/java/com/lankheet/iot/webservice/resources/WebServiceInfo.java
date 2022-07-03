@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.jar.Manifest;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Class that provides information of this web service
+ */
 public class WebServiceInfo {
     Manifest manifest;
 

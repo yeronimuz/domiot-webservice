@@ -1,8 +1,12 @@
 package com.lankheet.iot.webservice.config;
 
-import org.hibernate.validator.constraints.NotEmpty;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.validation.constraints.NotEmpty;
+
+/**
+ * Configuration class for a database connection
+ */
 public class DatabaseConfig {
 	
 	@NotEmpty

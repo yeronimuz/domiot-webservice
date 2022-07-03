@@ -1,7 +1,5 @@
 package com.lankheet.iot.webservice;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import com.lankheet.iot.webservice.config.WebServiceConfig;
 import com.lankheet.iot.webservice.health.DatabaseHealthCheck;
 import com.lankheet.iot.webservice.health.MqttConnectionHealthCheck;
@@ -12,17 +10,19 @@ import com.lankheet.utils.TcpPortUtil;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The web service has the following tasks:<BR>
  * <li>It accepts measurements from the message broker
  * <li>It saves the measurements in the database
- * <li>It serves as a resource for the measurements database
+ * <li>It serves as a measurements resource for the measurements from the database
  *
  */
 public class WebService extends Application<WebServiceConfig> {
-    private static final Logger LOG = LogManager.getLogger(WebService.class);
-    private static final int TIMEOUT_FOR_PORTSCAN = 200;
+    private static final Logger LOG                  = LoggerFactory.getLogger(WebService.class);
+    private static final int    TIMEOUT_FOR_PORTSCAN = 200;
     private static final int DEFAULT_MQTT_PORT = 1883;
     private static final String DEFAULT_MQTT_HOST = "localhost";
 
@@ -38,14 +38,14 @@ public class WebService extends Application<WebServiceConfig> {
 
     @Override
     public void initialize(Bootstrap<WebServiceConfig> bootstrap) {
-        LOG.info("Lankheet LNB IOT web service", "");
+        LOG.info("Lankheet IOT web service");
     }
 
     @Override
     public void run(WebServiceConfig configuration, Environment environment) throws Exception {
         this.setConfiguration(configuration);
         if (!TcpPortUtil.isPortOpen(DEFAULT_MQTT_HOST, DEFAULT_MQTT_PORT, TIMEOUT_FOR_PORTSCAN)) {
-            LOG.fatal("Mqtt port not accessible");
+            LOG.error("Mqtt port not accessible");
             System.exit(-1);
         } else {
             LOG.info("MQTT port available");

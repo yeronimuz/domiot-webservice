@@ -4,6 +4,9 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import com.codahale.metrics.health.HealthCheck;
 import com.lankheet.iot.webservice.MqttClientManager;
 
+/**
+ * Determines whether the MQTT connection is still alive
+ */
 public class MqttConnectionHealthCheck extends HealthCheck {
 
 	private MqttClientManager mqttClientManager;

@@ -1,71 +1,90 @@
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+
+plugins{
+   id "com.github.johnrengelman.shadow" version "7.1.2"
+   id 'net.nemerosa.versioning' version '2.8.2'
+   id 'jacoco'
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
-apply plugin: 'gradle-one-jar'
 apply plugin: 'maven-publish'
-apply plugin: 'jacoco'
 
-version '0.1-SNAPSHOT'
+version '0.0.1'
 
-repositories {
-    mavenLocal()
-    mavenCentral()
+ext{
+   baseName = 'lnb-iot-webservice'
+   classifier = 'SNAPSHOT'
+   mainClassName = 'com.lankheet.iot.webservice.WebService'
 }
 
-eclipse {
-    classpath {
-        downloadJavadoc = true
-        downloadSources = true
-    }
+repositories{
+   mavenLocal()
+   mavenCentral()
 }
 
-jacoco {
-    toolVersion = "0.7.6.201602180812"
-    reportsDir = file("$buildDir/customJacocoReportDir")
+publishing{
+   publications{
+      maven(MavenPublication){
+         groupId 'com.lankheet.iot'
+         artifactId 'lnb-webservice'
+         version version
+
+         from components.java
+      }
+   }
 }
 
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.github.rholder:gradle-one-jar:1.0.4'
-    }
+shadowJar{
+   mergeServiceFiles()
+   exclude 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.SF'
+   manifest{
+      attributes(
+         'Main-Class': project.ext.mainClassName,
+         'Implementation-Title': 'Lankheet IOT WebService',
+         'Implementation-Version': version,
+         'Implementation-Classifier': project.ext.classifier,
+         'Built-By': System.properties['user.name'],
+         'Build-Time': ZonedDateTime.now(ZoneId.of("UTC"))
+            .format(DateTimeFormatter.ISO_ZONED_DATE_TIME),
+         'Build-Revision': versioning.info.commit,
+         'Created-By': "Gradle ${gradle.gradleVersion}",
+         'Build-Jdk': "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
+         'Build-OS': "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}"
+      )
+   }
 }
 
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId 'com.lankheet.iot'
-            artifactId 'lnb-webservice'
-            version version
-
-            from components.java
-        }
-    }
+jacoco{
+   toolVersion = "0.8.7"
+   reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
 }
 
-task bigJar(type: OneJar) {
-    mainClass = 'com.lankheet.iot.webservice.WebService'
-    manifest {
-        attributes 'Implementation-Title': 'IOT-Webservice',
-                   'Implementation-Version': version,
-                   'Main-Class': mainClass
-    }
+test {
+   finalizedBy jacocoTestReport // report is always generated after tests run
+}
+jacocoTestReport {
+   dependsOn test // tests are required to run before generating the report
 }
 
-dependencies {
-    compile 'com.lankheet.iot:lnb-domotics-datatypes:0.2+'
-    compile 'org.apache.logging.log4j:log4j-core:2.4'
-    compile 'com.fasterxml.jackson.core:jackson-core:2.8.1'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.8.1'
-    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.8.1'
-    compile 'io.dropwizard:dropwizard-core:1.0.6'
-    compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
-    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.44'
-    
-    testCompile 'info.cukes:cucumber-java:1.2.4'
-    testCompile 'info.cukes:cucumber-junit:1.2.4'
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.hamcrest:hamcrest-junit:2.0.0.0'
-    testCompile 'org.jmockit:jmockit:1.34'  
+dependencies{
+   implementation 'com.lankheet.iot:datatypes:0.5.1-SNAPSHOT'
+   implementation 'com.fasterxml.jackson.core:jackson-core:2.13.3'
+   implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
+   implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3'
+   implementation group: 'org.hibernate', name: 'hibernate-core', version: '6.1.1.Final'
+   implementation 'io.dropwizard:dropwizard-core:2.1.0'
+   implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
+   implementation group: 'mysql', name: 'mysql-connector-java', version: '5.1.44'
+
+   testImplementation 'info.cukes:cucumber-java:1.2.6'
+   testImplementation 'info.cukes:cucumber-junit:1.2.6'
+   testImplementation group: 'org.hibernate', name: 'hibernate-core', version: '6.1.1.Final'
+   testImplementation group: 'org.hibernate.common', name: 'hibernate-commons-annotations', version: '6.0.2.Final'
+   testImplementation group: 'org.junit.platform', name: 'junit-platform-runner', version: '1.7.1'
+   testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.7.2'
+   testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '4.5.1'
+   testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.5.1'
 }
