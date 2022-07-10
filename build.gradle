@@ -6,11 +6,9 @@ plugins{
    id "com.github.johnrengelman.shadow" version "7.1.2"
    id 'net.nemerosa.versioning' version '2.8.2'
    id 'jacoco'
+   id 'java'
+   id 'maven-publish'
 }
-
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
 
 version '0.0.1'
 
