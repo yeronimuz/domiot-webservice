@@ -1,4 +1,4 @@
-package com.lankheet.iot.webservice.resources;
+package org.domiot.webservice.resources;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
