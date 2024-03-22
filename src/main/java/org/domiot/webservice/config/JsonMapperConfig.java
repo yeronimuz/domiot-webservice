@@ -16,10 +16,8 @@ import java.time.format.DateTimeFormatter;
 @Configuration
 public class JsonMapperConfig {
 
-    private static final String DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
-
     /**
-     * General object mapper for deserializing objects that are received through Mqtt
+     * General object mapper for deserializing objects that are received through Mqtt and served to clients
      *
      * @return The object mapper
      */
@@ -27,7 +25,7 @@ public class JsonMapperConfig {
     @Primary
     public ObjectMapper objectMapper() {
         JavaTimeModule module = new JavaTimeModule();
-        module.addSerializer(new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DATETIME_FORMAT)));
+        module.addSerializer(new LocalDateTimeSerializer(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         return new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL)
                 .registerModule(module);
     }
