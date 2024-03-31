@@ -53,10 +53,11 @@ test {
 dependencies {
     implementation group: 'org.lankheet.domiot', name: 'domiot-datatypes', version: '0.8.0-SNAPSHOT'
     implementation group: 'org.lankheet.domiot', name: 'domiot-rest-api', version: '1.1.1-SNAPSHOT'
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-parent', version: '3.2.3'
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '3.2.3'
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '3.2.3'
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '3.2.3'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-parent', version: '3.2.4'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '3.2.4'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '3.2.4'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '3.2.4'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '3.2.4'
     implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '3.3.3'
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-hibernate5', version: '2.17.0'
     implementation group: 'com.fasterxml.jackson.module', name: 'jackson-module-jakarta-xmlbind-annotations', version: '2.17.0'
@@ -66,7 +67,7 @@ dependencies {
     implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.3.0'
     implementation group: 'org.projectlombok', name: 'lombok-mapstruct-binding', version: '0.2.0'
     implementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '3.2.4'
+
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
     annotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: '1.5.5.Final'
 
@@ -74,7 +75,7 @@ dependencies {
 
     testImplementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.9'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.10.1'
-    testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '3.2.2'
+    testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '3.2.4'
     testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '5.10.0'
     testImplementation group: 'org.mockito', name: 'mockito-inline', version: '5.2.0'
     testImplementation group: 'org.junit.platform', name: 'junit-platform-runner', version: '1.10.1'
