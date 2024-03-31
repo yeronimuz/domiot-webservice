@@ -1,88 +1,85 @@
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-
-plugins{
-   id "com.github.johnrengelman.shadow" version "7.1.2"
-   id 'net.nemerosa.versioning' version '2.8.2'
-   id 'jacoco'
-   id 'java'
-   id 'maven-publish'
+plugins {
+    id 'org.springframework.boot' version '3.2.3'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'jacoco'
+    id 'java'
+    id 'maven-publish'
 }
 
 version '0.0.1'
 
-ext{
-   baseName = 'lnb-iot-webservice'
-   classifier = 'SNAPSHOT'
-   mainClassName = 'com.lankheet.iot.webservice.WebService'
+ext {
+    baseName = 'lnb-iot-webservice'
+    classifier = 'SNAPSHOT'
+    mainClassName = 'org.domiot.webservice.WebService'
 }
 
-repositories{
-   mavenLocal()
-   mavenCentral()
+repositories {
+    mavenLocal()
+    mavenCentral()
 }
 
-publishing{
-   publications{
-      maven(MavenPublication){
-         groupId 'com.lankheet.iot'
-         artifactId 'lnb-webservice'
-         version version
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId 'org.lankheet.domiot'
+            artifactId 'domiot-webservice'
+            version version
 
-         from components.java
-      }
-   }
+            from components.java
+        }
+    }
 }
 
-shadowJar{
-   mergeServiceFiles()
-   exclude 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.SF'
-   manifest{
-      attributes(
-         'Main-Class': project.ext.mainClassName,
-         'Implementation-Title': 'Lankheet IOT WebService',
-         'Implementation-Version': version,
-         'Implementation-Classifier': project.ext.classifier,
-         'Built-By': System.properties['user.name'],
-         'Build-Time': ZonedDateTime.now(ZoneId.of("UTC"))
-            .format(DateTimeFormatter.ISO_ZONED_DATE_TIME),
-         'Build-Revision': versioning.info.commit,
-         'Created-By': "Gradle ${gradle.gradleVersion}",
-         'Build-Jdk': "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
-         'Build-OS': "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}"
-      )
-   }
+jacoco {
+    toolVersion = "0.8.7"
+    reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
 }
 
-jacoco{
-   toolVersion = "0.8.7"
-   reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
+}
+
+configurations {
+    compile.exclude module: 'spring-boot-starter-logging'
+    all*.exclude group: 'commons-logging', module: 'commons-logging'
+//    compile.exclude group: 'org.springframework.boot', name: 'spring-boot-starter-tomcat'
 }
 
 test {
-   finalizedBy jacocoTestReport // report is always generated after tests run
-}
-jacocoTestReport {
-   dependsOn test // tests are required to run before generating the report
+    finalizedBy jacocoTestReport // report is always generated after tests run
 }
 
-dependencies{
-   implementation 'com.lankheet.iot:datatypes:0.5.1-SNAPSHOT'
-   implementation 'com.fasterxml.jackson.core:jackson-core:2.13.3'
-   implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
-   implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3'
-   implementation group: 'org.hibernate', name: 'hibernate-core', version: '6.1.1.Final'
-   implementation 'io.dropwizard:dropwizard-core:2.1.0'
-   implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
-   implementation group: 'mysql', name: 'mysql-connector-java', version: '5.1.44'
+dependencies {
+    implementation group: 'org.lankheet.domiot', name: 'domiot-datatypes', version: '0.8.0-SNAPSHOT'
+    implementation group: 'org.lankheet.domiot', name: 'domiot-rest-api', version: '1.1.1-SNAPSHOT'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-parent', version: '3.2.4'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '3.2.4'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '3.2.4'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '3.2.4'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '3.2.4'
+    implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '3.3.3'
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-hibernate5', version: '2.17.0'
+    implementation group: 'com.fasterxml.jackson.module', name: 'jackson-module-jakarta-xmlbind-annotations', version: '2.17.0'
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.17.0'
+    implementation group: 'org.mapstruct', name: 'mapstruct', version: '1.5.5.Final'
+    implementation group: 'org.mapstruct', name: 'mapstruct-processor', version: '1.5.5.Final'
+    implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.3.0'
+    implementation group: 'org.projectlombok', name: 'lombok-mapstruct-binding', version: '0.2.0'
+    implementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
 
-   testImplementation 'info.cukes:cucumber-java:1.2.6'
-   testImplementation 'info.cukes:cucumber-junit:1.2.6'
-   testImplementation group: 'org.hibernate', name: 'hibernate-core', version: '6.1.1.Final'
-   testImplementation group: 'org.hibernate.common', name: 'hibernate-commons-annotations', version: '6.0.2.Final'
-   testImplementation group: 'org.junit.platform', name: 'junit-platform-runner', version: '1.7.1'
-   testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.7.2'
-   testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '4.5.1'
-   testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.5.1'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: '1.5.5.Final'
+
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.32'
+
+    testImplementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.9'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.10.1'
+    testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '3.2.4'
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '5.10.0'
+    testImplementation group: 'org.mockito', name: 'mockito-inline', version: '5.2.0'
+    testImplementation group: 'org.junit.platform', name: 'junit-platform-runner', version: '1.10.1'
+    testImplementation 'org.hamcrest:hamcrest-junit:2.0.0.0'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
+    testAnnotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: '1.5.5.Final'
 }
