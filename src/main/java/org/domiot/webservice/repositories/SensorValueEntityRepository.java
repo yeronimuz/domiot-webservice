@@ -12,4 +12,6 @@ import java.util.List;
 @Repository
 public interface SensorValueEntityRepository extends CrudRepository<SensorValueEntity, Long> {
     List<SensorValueEntity> findBySensorEntityAndTimeStampBetween(SensorEntity sensorEntity, LocalDateTime start, LocalDateTime end, Pageable pageable);
+
+    List<SensorValueEntity> findByTimeStampBetween(LocalDateTime startTime, LocalDateTime endTime);
 }

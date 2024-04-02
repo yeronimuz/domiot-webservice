@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.domiot.webservice.repositories.SensorEntityRepository;
 import org.domiot.webservice.repositories.SensorValueEntityRepository;
 import org.lankheet.domiot.entities.SensorEntity;
+import org.lankheet.domiot.entities.SensorValueEntity;
 import org.lankheet.domiot.mapper.SensorValueMapper;
 import org.lankheet.domiot.model.SensorValue;
 import org.springframework.data.domain.PageRequest;
@@ -30,16 +31,24 @@ public class SensorValueService {
         this.sensorValueMapper = sensorValueMapper;
     }
 
-    public List<SensorValue> getSensorValues(@NotNull Long sensorId, @NotNull LocalDateTime startTime, @NotNull LocalDateTime endTime, @Min(0L) Integer offset, @Min(0L) @Max(200L) Integer limit) {
-        SensorEntity sensorEntity = sensorEntityRepository.findById(sensorId).orElse(null);
-        if (sensorEntity == null) {
-            return Collections.emptyList();
-        }
+    public List<SensorValue> getSensorValues(Integer sensorId, @NotNull LocalDateTime startTime, @NotNull LocalDateTime endTime, @Min(0L) Integer offset, @Min(0L) @Max(200L) Integer limit) {
         Pageable pageable = PageRequest.of(offset, limit);
-        return sensorValueMapper.map(sensorValueEntityRepository.findBySensorEntityAndTimeStampBetween(
-                sensorEntity,
-                startTime,
-                endTime,
-                pageable));
+        List<SensorValueEntity> sensorValueEntities = null;
+        if (sensorId == null) {
+            // Get all sensor values in the timeframe
+            sensorValueEntities = sensorValueEntityRepository.findByTimeStampBetween(startTime, endTime);
+        } else {
+            SensorEntity sensorEntity = sensorEntityRepository.findById(sensorId.longValue()).orElse(null);
+            if (sensorEntity == null) {
+                return Collections.emptyList();
+            } else {
+                sensorValueEntities = sensorValueEntityRepository.findBySensorEntityAndTimeStampBetween(
+                        sensorEntity,
+                        startTime,
+                        endTime,
+                        pageable);
+            }
+        }
+        return sensorValueMapper.map(sensorValueEntities);
     }
 }

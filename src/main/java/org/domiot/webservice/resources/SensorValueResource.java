@@ -26,11 +26,11 @@ public class SensorValueResource implements SensorValueApi {
 
     @GetMapping("/sensor-values")
     @Override
-    public SensorValueListResponse getSensorValues(@NotNull Integer sensorId, @NotNull LocalDateTime start, @NotNull LocalDateTime end, @Min(0L) Integer offset, @Min(0L) @Max(200L) Integer limit) {
+    public SensorValueListResponse getSensorValues(@NotNull LocalDateTime start, @NotNull LocalDateTime end, @Min(0L) Integer offset, @Min(0L) @Max(200L) Integer limit, Integer sensorId) {
         log.debug("Get sensor values for sensor id {}", sensorId);
 
         SensorValueListResponse sensorValueListResponse = new SensorValueListResponse();
-        List<SensorValue> sensorValues = sensorValueService.getSensorValues((long) sensorId, start, end, offset, limit);
+        List<SensorValue> sensorValues = sensorValueService.getSensorValues(sensorId, start, end, offset, limit);
         sensorValueListResponse.setResult(sensorValues);
         sensorValueListResponse.setTotal((long) sensorValues.size());
         sensorValueListResponse.setOffset(offset);
@@ -38,5 +38,4 @@ public class SensorValueResource implements SensorValueApi {
 
         return sensorValueListResponse;
     }
-
 }
