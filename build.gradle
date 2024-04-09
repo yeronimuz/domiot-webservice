@@ -6,8 +6,6 @@ plugins {
     id 'maven-publish'
 }
 
-version '0.0.2'
-
 ext {
     baseName = 'lnb-iot-webservice'
     classifier = 'SNAPSHOT'
@@ -74,11 +72,11 @@ dependencies {
     compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.32'
 
     testImplementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.9'
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.10.1'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.10.2'
     testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '3.2.4'
-    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '5.10.0'
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '5.11.0'
     testImplementation group: 'org.mockito', name: 'mockito-inline', version: '5.2.0'
-    testImplementation group: 'org.junit.platform', name: 'junit-platform-runner', version: '1.10.1'
+    testImplementation group: 'org.junit.platform', name: 'junit-platform-runner', version: '1.10.2'
     testImplementation 'org.hamcrest:hamcrest-junit:2.0.0.0'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
     testAnnotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: '1.5.5.Final'
