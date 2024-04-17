@@ -50,7 +50,7 @@ test {
 
 dependencies {
     implementation group: 'org.lankheet.domiot', name: 'domiot-datatypes', version: '0.8.0-SNAPSHOT'
-    implementation group: 'org.lankheet.domiot', name: 'domiot-rest-api', version: '1.1.1-SNAPSHOT'
+    implementation group: 'org.lankheet.domiot', name: 'domiot-rest-api', version: '1.1.1'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-parent', version: '3.2.4'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '3.2.4'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '3.2.4'

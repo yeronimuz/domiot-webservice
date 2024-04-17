@@ -9,13 +9,13 @@ import org.domiot.webservice.repositories.SensorValueEntityRepository;
 import org.lankheet.domiot.entities.SensorEntity;
 import org.lankheet.domiot.entities.SensorValueEntity;
 import org.lankheet.domiot.mapper.SensorValueMapper;
-import org.lankheet.domiot.model.SensorValue;
+import org.lankheet.domiot.model.SensorValueListResponse;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -31,24 +31,26 @@ public class SensorValueService {
         this.sensorValueMapper = sensorValueMapper;
     }
 
-    public List<SensorValue> getSensorValues(Integer sensorId, @NotNull LocalDateTime startTime, @NotNull LocalDateTime endTime, @Min(0L) Integer offset, @Min(0L) @Max(200L) Integer limit) {
+    public SensorValueListResponse getSensorValues(Integer sensorId, @NotNull LocalDateTime startTime, @NotNull LocalDateTime endTime, @Min(0L) Integer offset, @Min(0L) @Max(200L) Integer limit) {
         Pageable pageable = PageRequest.of(offset, limit);
-        List<SensorValueEntity> sensorValueEntities = null;
+        Page<SensorValueEntity> returnPage = null;
+        SensorValueListResponse sensorValueListResponse = new SensorValueListResponse();
         if (sensorId == null) {
             // Get all sensor values in the timeframe
-            sensorValueEntities = sensorValueEntityRepository.findByTimeStampBetween(startTime, endTime);
+            returnPage = sensorValueEntityRepository.findByTimeStampBetweenOrderByTimeStamp(startTime, endTime, Pageable.unpaged());
         } else {
             SensorEntity sensorEntity = sensorEntityRepository.findById(sensorId.longValue()).orElse(null);
-            if (sensorEntity == null) {
-                return Collections.emptyList();
-            } else {
-                sensorValueEntities = sensorValueEntityRepository.findBySensorEntityAndTimeStampBetween(
-                        sensorEntity,
-                        startTime,
-                        endTime,
-                        pageable);
+            if (sensorEntity != null) {
+                log.info("Sensor id {} found",  sensorId);
+                returnPage = sensorValueEntityRepository.findBySensorEntityAndTimeStampBetweenOrderByTimeStamp(sensorEntity, startTime, endTime, pageable);
             }
         }
-        return sensorValueMapper.map(sensorValueEntities);
+        if (returnPage != null) {
+            sensorValueListResponse.setResult(sensorValueMapper.map(returnPage.getContent()));
+            sensorValueListResponse.setPageNumber(returnPage.getNumber());
+            sensorValueListResponse.setPageSize(returnPage.getSize());
+            sensorValueListResponse.setTotal(returnPage.getTotalElements());
+        }
+        return sensorValueListResponse;
     }
 }

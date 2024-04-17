@@ -1,21 +1,17 @@
 package org.domiot.webservice.resources;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.domiot.webservice.services.SensorValueService;
 import org.lankheet.domiot.api.SensorValueApi;
-import org.lankheet.domiot.model.SensorValue;
 import org.lankheet.domiot.model.SensorValueListResponse;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Slf4j
-@RestController
+@RestController()
 public class SensorValueResource implements SensorValueApi {
 
     private final SensorValueService sensorValueService;
@@ -24,18 +20,12 @@ public class SensorValueResource implements SensorValueApi {
         this.sensorValueService = sensorValueService;
     }
 
-    @GetMapping("/sensor-values")
     @Override
-    public SensorValueListResponse getSensorValues(@NotNull LocalDateTime start, @NotNull LocalDateTime end, @Min(0L) Integer offset, @Min(0L) @Max(200L) Integer limit, Integer sensorId) {
+    public ResponseEntity<SensorValueListResponse> getSensorValues(LocalDateTime start, Integer pageNumber, Integer pageSize, Integer sensorId, LocalDateTime end) {
         log.debug("Get sensor values for sensor id {}", sensorId);
 
-        SensorValueListResponse sensorValueListResponse = new SensorValueListResponse();
-        List<SensorValue> sensorValues = sensorValueService.getSensorValues(sensorId, start, end, offset, limit);
-        sensorValueListResponse.setResult(sensorValues);
-        sensorValueListResponse.setTotal((long) sensorValues.size());
-        sensorValueListResponse.setOffset(offset);
-        sensorValueListResponse.setLimit(limit);
+        SensorValueListResponse sensorValueListResponse = sensorValueService.getSensorValues(sensorId, start, end, pageNumber, pageSize);
 
-        return sensorValueListResponse;
+        return new ResponseEntity<>(sensorValueListResponse, HttpStatus.OK);
     }
 }
