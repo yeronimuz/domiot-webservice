@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: domiot
+      MYSQL_USER: domiotuser
+      MYSQL_PASSWORD: domiotpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - domiot-network
+
+  mqtt-broker:
+    image: eclipse-mosquitto:latest
+    container_name: mqtt-broker
+    ports:
+      - "1883:1883"
+      - "9001:9001" # WebSocket port
+    volumes:
+      - mosquitto_config:/mosquitto/config
+      - mosquitto_data:/mosquitto/data
+    networks:
+      - domiot-network
+
+  spring-app:
+    build:
+      context: ./spring-app
+      dockerfile: Dockerfile
+    container_name: spring-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mariadb:3306/domiot
+      SPRING_DATASOURCE_USERNAME: domiotuser
+      SPRING_DATASOURCE_PASSWORD: domiotpassword
+      MQTT_BROKER_URL: tcp://mqtt-broker:1883
+    depends_on:
+      - mariadb
+      - mqtt-broker
+    networks:
+      - domiot-network
+
+volumes:
+  mariadb_data:
+  mosquitto_config:
+  mosquitto_data:
+
+networks:
+  domiot-network:
+    driver: bridge
