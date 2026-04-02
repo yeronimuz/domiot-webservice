@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @RestController()
@@ -21,10 +22,10 @@ public class SensorValueResource implements SensorValueApi {
     }
 
     @Override
-    public ResponseEntity<SensorValueListResponse> getSensorValues(LocalDateTime start, Integer pageNumber, Integer pageSize, Integer sensorId, LocalDateTime end) {
-        log.debug("Get sensor values for sensor id {}", sensorId);
+    public ResponseEntity<SensorValueListResponse> getSensorValues(List<Long> sensorIds, LocalDateTime start, LocalDateTime end, Integer samplingTime) {
+        log.debug("Get sensor values for sensor id {}", sensorIds);
 
-        SensorValueListResponse sensorValueListResponse = sensorValueService.getSensorValues(sensorId, start, end, pageNumber, pageSize);
+        SensorValueListResponse sensorValueListResponse = sensorValueService.getSensorValues(sensorIds, start, end, samplingTime);
 
         return new ResponseEntity<>(sensorValueListResponse, HttpStatus.OK);
     }
