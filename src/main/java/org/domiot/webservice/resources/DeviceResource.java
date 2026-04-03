@@ -17,27 +17,31 @@ public class DeviceResource implements DeviceApi {
 
     private final DeviceService deviceService;
 
-    public DeviceResource(DeviceService deviceService) {
+    public DeviceResource(final DeviceService deviceService) {
         this.deviceService = deviceService;
     }
 
     @Override
     public ResponseEntity<List<Device>> addDevices(Long siteId, List<Device> deviceList) {
-        return new ResponseEntity<>(this.deviceService.addDevices(siteId, deviceList), HttpStatus.OK);
+        log.info("Adding {} devices for siteId={}", deviceList == null ? 0 : deviceList.size(), siteId);
+        return ResponseEntity.ok(this.deviceService.addDevices(siteId, deviceList));
     }
 
     @Override
     public ResponseEntity<List<Device>> getDevice(Long siteId, Long deviceId) {
+        log.info("Device lookup is not implemented yet for siteId={} and deviceId={}", siteId, deviceId);
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     @Override
     public ResponseEntity<List<Device>> getSiteDevices(BigDecimal siteId) {
+        log.info("Site device lookup is not implemented yet for siteId={}", siteId);
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     @Override
     public ResponseEntity<List<Device>> updateDevice(Long siteId, Object deviceId, Device device) {
+        log.info("Device update is not implemented yet for siteId={} and deviceId={}", siteId, deviceId);
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 }

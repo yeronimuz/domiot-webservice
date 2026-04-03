@@ -22,6 +22,7 @@ public class SensorGraphResource implements SensorGraphDataApi {
 
     @Override
     public ResponseEntity<SensorValueGraphResponse> getSensorValueGraphData(List<Long> sensorIds, LocalDateTime start, LocalDateTime end) {
+        log.debug("Get sensor graph data for sensor ids {} between {} and {}", sensorIds, start, end);
         return ResponseEntity.ok().body(sensorValueService.getSensorValueGraphData(sensorIds, start, end));
     }
 
