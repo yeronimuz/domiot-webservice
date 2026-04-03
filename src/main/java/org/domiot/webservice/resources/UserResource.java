@@ -1,9 +1,9 @@
 package org.domiot.webservice.resources;
 
 import lombok.extern.slf4j.Slf4j;
+import org.domiot.webservice.services.UserService;
 import org.lankheet.domiot.api.UserApi;
 import org.lankheet.domiot.model.User;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,22 +13,36 @@ import java.util.List;
 @RestController
 public class UserResource implements UserApi {
 
+    private final UserService userService;
+
+    public UserResource(final UserService userService) {
+        this.userService = userService;
+    }
+
     @Override
     public ResponseEntity<User> addUser(User user) {
-        log.info("User creation is not implemented yet");
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        if (user == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        log.info("Creating user");
+        return ResponseEntity.ok(userService.addUser(user));
     }
 
     @Override
     public ResponseEntity<User> getUser(Long userId) {
-        log.info("User lookup is not implemented yet for userId={}", userId);
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        return userService.getUser(userId)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Override
     public ResponseEntity<List<User>> updateUser(Long userId, User user) {
-        log.info("User update is not implemented yet for userId={}", userId);
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        if (user == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return userService.updateUser(userId, user)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
 

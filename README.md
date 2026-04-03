@@ -4,6 +4,24 @@ This project is a web service that handles all web requests of the domotics eco-
 # Swagger UI
 http://<host>:<port>/api/swagger-ui/index.html#
 
+# OpenAPI coverage check
+Use this check to compare the endpoints defined in `domiot-rest-api` against the live OpenAPI document exposed by this service.
+
+Default OpenAPI docs URL:
+`http://localhost:7010/api/v3/api-docs`
+
+Run the report task:
+`./gradlew openApiCoverageReport`
+
+Override the docs URL (useful in CI):
+`./gradlew openApiCoverageReport -PopenApiUrl=http://127.0.0.1:7010/api/v3/api-docs`
+
+Report output:
+- `build/reports/api-coverage/openapi-coverage.json`
+- `build/reports/api-coverage/openapi-coverage.md`
+
+The Gradle task exits with a non-zero status if endpoints are missing/extra, so it can be used as a CI gate.
+
 Requirements sensor values:
 As domiot user I want to show a graph of single and multiple sensor values for a specific time range.
 This time range can be: Daily, Hourly, Weekly, Monthly, Yearly

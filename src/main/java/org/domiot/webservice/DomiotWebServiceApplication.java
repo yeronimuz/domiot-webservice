@@ -9,7 +9,9 @@ import org.lankheet.domiot.mapper.MqttTopicMapperImpl;
 import org.lankheet.domiot.mapper.MqttTopicPathMapperImpl;
 import org.lankheet.domiot.mapper.SensorMapperImpl;
 import org.lankheet.domiot.mapper.SensorValueMapperImpl;
+import org.lankheet.domiot.mapper.SiteMapperImpl;
 import org.lankheet.domiot.mapper.SerialConfigMapperImpl;
+import org.lankheet.domiot.mapper.UserMapperImpl;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Import;
@@ -25,6 +27,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
                 DeviceMapperImpl.class,
                 SensorValueMapperImpl.class,
                 SensorMapperImpl.class,
+                SiteMapperImpl.class,
+                UserMapperImpl.class,
                 MqttTopicPathMapperImpl.class,
                 MqttTopicMapperImpl.class,
                 DomiotParameterMapperImpl.class,

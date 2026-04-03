@@ -41,6 +41,7 @@ jacocoTestReport {
 configurations {
     compile.exclude module: 'spring-boot-starter-logging'
     all*.exclude group: 'commons-logging', module: 'commons-logging'
+    apiContractSources
 //    compile.exclude group: 'org.springframework.boot', name: 'spring-boot-starter-tomcat'
 }
 
@@ -52,6 +53,7 @@ test {
 dependencies {
     implementation 'org.lankheet.domiot:domiot-datatypes:0.9.0-SNAPSHOT'
     implementation 'org.lankheet.domiot:domiot-rest-api:1.3.0-SNAPSHOT'
+    apiContractSources 'org.lankheet.domiot:domiot-rest-api:1.3.0-SNAPSHOT:sources'
 
     implementation 'org.springframework.boot:spring-boot-starter-webflux:3.5.13'
     implementation 'org.springframework.boot:spring-boot-starter-parent:3.5.13'
@@ -85,3 +87,26 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
     testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
 }
+
+tasks.register('openApiCoverageReport', Exec) {
+    group = 'verification'
+    description = 'Compares domiot-rest-api contract mappings with live OpenAPI docs and writes a coverage report.'
+
+    def openApiUrl = project.findProperty('openApiUrl') ?: 'http://localhost:7010/api/v3/api-docs'
+
+    doFirst {
+        def sourceJar = configurations.apiContractSources.files.find { file ->
+            file.name.contains('domiot-rest-api') && file.name.endsWith('-sources.jar')
+        }
+        if (sourceJar == null) {
+            throw new GradleException('Could not resolve domiot-rest-api sources jar for OpenAPI coverage check.')
+        }
+
+        commandLine 'python3',
+                "$projectDir/scripts/openapi_coverage_report.py",
+                '--api-sources', sourceJar,
+                '--openapi-url', openApiUrl,
+                '--out-dir', "$buildDir/reports/api-coverage"
+    }
+}
+
