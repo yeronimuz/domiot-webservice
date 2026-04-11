@@ -1,6 +1,9 @@
 # domiot-webservice
 This project is a web service that handles all web requests of the domotics eco-system.
 
+# Java requirement
+Build and test this project with JDK 23.
+
 # Swagger UI
 http://<host>:<port>/api/swagger-ui/index.html#
 
