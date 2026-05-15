@@ -2,8 +2,8 @@ package org.domiot.webservice.resources;
 
 import lombok.extern.slf4j.Slf4j;
 import org.domiot.webservice.services.SensorValueService;
-import org.lankheet.domiot.api.SensorGraphDataApi;
-import org.lankheet.domiot.model.SensorValueGraphResponse;
+import org.domiot.api.SensorGraphDataApi;
+import org.domiot.model.SensorValueGraphResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 

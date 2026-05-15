@@ -1,12 +1,11 @@
 package org.domiot.webservice.repositories;
 
-import org.lankheet.domiot.entities.SensorEntity;
-import org.lankheet.domiot.entities.SensorValueEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
 import java.time.LocalDateTime;
 import java.util.List;
+
+import org.domiot.entities.SensorValueEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SensorValueEntityRepository extends JpaRepository<SensorValueEntity, Long> {

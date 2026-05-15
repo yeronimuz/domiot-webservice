@@ -1,15 +1,15 @@
 package org.domiot.webservice.services;
 
-import lombok.extern.slf4j.Slf4j;
-import org.lankheet.domiot.entities.SensorValueEntity;
-import org.springframework.stereotype.Service;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
+
+import lombok.extern.slf4j.Slf4j;
+
+import org.domiot.entities.SensorValueEntity;
+import org.springframework.stereotype.Service;
 
 /**
  * This service works as a cache for retrieving SensorValue entities.
@@ -38,7 +38,7 @@ public class SensorValueCachingService {
                     .filter(sensorValueEntity -> sensorValueEntity.getTimeStamp().isAfter(request.startTime.minusNanos(1L)))
                     .filter(sensorValueEntity -> sensorValueEntity.getTimeStamp().isBefore(request.endTime.plusNanos(1L)))
                     .sorted(Comparator.comparing(SensorValueEntity::getTimeStamp))
-                    .collect(Collectors.toList());
+                    .toList();
         }
         return Collections.emptyList();
     }

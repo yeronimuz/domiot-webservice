@@ -1,7 +1,7 @@
 package org.domiot.webservice.repositories;
 
-import org.lankheet.domiot.entities.DeviceEntity;
-import org.lankheet.domiot.entities.SensorEntity;
+import org.domiot.entities.DeviceEntity;
+import org.domiot.entities.SensorEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

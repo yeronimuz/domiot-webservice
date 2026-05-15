@@ -6,8 +6,8 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
 import org.domiot.webservice.services.SensorValueService;
-import org.lankheet.domiot.api.SensorValueApi;
-import org.lankheet.domiot.model.SensorValueListResponse;
+import org.domiot.api.SensorValueApi;
+import org.domiot.model.SensorValueListResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 

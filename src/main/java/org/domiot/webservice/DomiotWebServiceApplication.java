@@ -1,17 +1,17 @@
 package org.domiot.webservice;
 
 import lombok.extern.slf4j.Slf4j;
-import org.lankheet.domiot.mapper.ActuatorMapperImpl;
-import org.lankheet.domiot.mapper.DeviceMapperImpl;
-import org.lankheet.domiot.mapper.DomiotParameterMapperImpl;
-import org.lankheet.domiot.mapper.MqttConfigMapperImpl;
-import org.lankheet.domiot.mapper.MqttTopicMapperImpl;
-import org.lankheet.domiot.mapper.MqttTopicPathMapperImpl;
-import org.lankheet.domiot.mapper.SensorMapperImpl;
-import org.lankheet.domiot.mapper.SensorValueMapperImpl;
-import org.lankheet.domiot.mapper.SiteMapperImpl;
-import org.lankheet.domiot.mapper.SerialConfigMapperImpl;
-import org.lankheet.domiot.mapper.UserMapperImpl;
+import org.domiot.mapper.ActuatorMapperImpl;
+import org.domiot.mapper.DeviceMapperImpl;
+import org.domiot.mapper.DomiotParameterMapperImpl;
+import org.domiot.mapper.MqttConfigMapperImpl;
+import org.domiot.mapper.MqttTopicMapperImpl;
+import org.domiot.mapper.MqttTopicPathMapperImpl;
+import org.domiot.mapper.SensorMapperImpl;
+import org.domiot.mapper.SensorValueMapperImpl;
+import org.domiot.mapper.SiteMapperImpl;
+import org.domiot.mapper.SerialConfigMapperImpl;
+import org.domiot.mapper.UserMapperImpl;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Import;
@@ -20,7 +20,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  * Main SpringBoot application class
  */
 @SpringBootApplication
-@EnableJpaRepositories("org.lankheet.domiot.entities")
+@EnableJpaRepositories("org.domiot.entities")
 @Import(
         {
                 DeviceMapperImpl.class,

@@ -1,14 +1,13 @@
 package org.domiot.webservice.services;
 
-import lombok.extern.slf4j.Slf4j;
-import org.lankheet.domiot.entities.SensorValueEntity;
-import org.springframework.stereotype.Service;
-
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import lombok.extern.slf4j.Slf4j;
+
+import org.domiot.entities.SensorValueEntity;
+import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j

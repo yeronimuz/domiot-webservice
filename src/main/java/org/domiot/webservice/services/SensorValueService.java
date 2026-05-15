@@ -1,27 +1,28 @@
 package org.domiot.webservice.services;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.extern.slf4j.Slf4j;
-import org.domiot.webservice.repositories.SensorEntityRepository;
-import org.domiot.webservice.repositories.SensorValueEntityRepository;
-import org.lankheet.domiot.entities.SensorEntity;
-import org.lankheet.domiot.entities.SensorValueEntity;
-import org.lankheet.domiot.mapper.SensorMapper;
-import org.lankheet.domiot.mapper.SensorValueMapper;
-import org.lankheet.domiot.model.GraphMetadata;
-import org.lankheet.domiot.model.NgxChartsData;
-import org.lankheet.domiot.model.NgxChartsDataSeriesInner;
-import org.lankheet.domiot.model.SensorValueGraphResponse;
-import org.lankheet.domiot.model.SensorValueListResponse;
-import org.lankheet.domiot.model.SensorValueSeriesItem;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import jakarta.validation.constraints.NotNull;
+
+import lombok.extern.slf4j.Slf4j;
+
+import org.domiot.entities.SensorEntity;
+import org.domiot.entities.SensorValueEntity;
+import org.domiot.mapper.SensorMapper;
+import org.domiot.mapper.SensorValueMapper;
+import org.domiot.model.GraphMetadata;
+import org.domiot.model.NgxChartsData;
+import org.domiot.model.NgxChartsDataSeriesInner;
+import org.domiot.model.SensorValueGraphResponse;
+import org.domiot.model.SensorValueListResponse;
+import org.domiot.model.SensorValueSeriesItem;
+import org.domiot.webservice.repositories.SensorEntityRepository;
+import org.domiot.webservice.repositories.SensorValueEntityRepository;
+import org.springframework.stereotype.Service;
 
 /**
  * This service will serve sensor values. It has two
@@ -103,7 +104,7 @@ public class SensorValueService {
                     ngxChartsDataSeriesInner.setValue(sensorValueEntity.getValue());
                     return ngxChartsDataSeriesInner;
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<SensorValueEntity> sample(List<SensorValueEntity> sensorValueEntities, Integer samplingFactor) {
@@ -113,6 +114,6 @@ public class SensorValueService {
         return IntStream.range(0, sensorValueEntities.size())
                 .filter(i -> i % samplingFactor == 0)
                 .mapToObj(sensorValueEntities::get)
-                .collect(Collectors.toList());
+                .toList();
     }
 }
