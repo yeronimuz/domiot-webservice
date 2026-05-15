@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -37,14 +38,11 @@ class SiteResourceTest {
     }
 
     @Test
-    void addSiteShouldReturnConflictWhenServiceThrowsDuplicateSiteException() {
+    void addSiteShouldPropagateDuplicateWhenServiceThrowsDuplicateSiteException() {
         Site input = new Site();
         when(siteService.addSite(input)).thenThrow(new DuplicateSiteException("duplicate"));
 
-        ResponseEntity<Site> response = siteResource.addSite(input);
-
-        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
-        assertNull(response.getBody());
+        assertThrows(DuplicateSiteException.class, () -> siteResource.addSite(input));
     }
 
     @Test

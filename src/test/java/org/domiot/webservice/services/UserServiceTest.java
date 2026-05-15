@@ -3,15 +3,16 @@ package org.domiot.webservice.services;
 import org.domiot.webservice.repositories.UserEntityRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.lankheet.domiot.entities.PermissionEntity;
-import org.lankheet.domiot.entities.SiteEntity;
-import org.lankheet.domiot.entities.UserEntity;
-import org.lankheet.domiot.mapper.UserMapper;
-import org.lankheet.domiot.model.User;
+import org.domiot.entities.PermissionEntity;
+import org.domiot.entities.SiteEntity;
+import org.domiot.entities.UserEntity;
+import org.domiot.mapper.UserMapper;
+import org.domiot.model.User;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Collections;
 import java.util.List;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -50,12 +52,56 @@ class UserServiceTest {
         User expected = new User();
 
         when(userMapper.map(input)).thenReturn(mapped);
-        when(userEntityRepository.save(mapped)).thenReturn(saved);
+        when(userEntityRepository.saveAndFlush(mapped)).thenReturn(saved);
         when(userMapper.map(saved)).thenReturn(expected);
 
         User result = userService.addUser(input);
 
         assertSame(expected, result);
+    }
+
+    @Test
+    void addUserShouldThrowDuplicateWhenEmailAlreadyExists() {
+        User input = new User();
+        UserEntity mapped = new UserEntity();
+        mapped.setEmail("dup@example.org");
+
+        when(userMapper.map(input)).thenReturn(mapped);
+        when(userEntityRepository.existsByEmail("dup@example.org")).thenReturn(true);
+
+        assertThrows(DuplicateUserException.class, () -> userService.addUser(input));
+        verify(userEntityRepository, never()).saveAndFlush(any(UserEntity.class));
+    }
+
+    @Test
+    void addUserShouldThrowDuplicateWhenUserNameAlreadyExists() {
+        User input = new User();
+        UserEntity mapped = new UserEntity();
+        mapped.setEmail("unique@example.org");
+        mapped.setUserName("already-used");
+
+        when(userMapper.map(input)).thenReturn(mapped);
+        when(userEntityRepository.existsByEmail("unique@example.org")).thenReturn(false);
+        when(userEntityRepository.existsByUserName("already-used")).thenReturn(true);
+
+        assertThrows(DuplicateUserException.class, () -> userService.addUser(input));
+        verify(userEntityRepository, never()).saveAndFlush(any(UserEntity.class));
+    }
+
+    @Test
+    void addUserShouldTranslateDataIntegrityViolationToDuplicateUserException() {
+        User input = new User();
+        UserEntity mapped = new UserEntity();
+        mapped.setEmail("race@example.org");
+        mapped.setUserName("race-user");
+
+        when(userMapper.map(input)).thenReturn(mapped);
+        when(userEntityRepository.existsByEmail("race@example.org")).thenReturn(false);
+        when(userEntityRepository.existsByUserName("race-user")).thenReturn(false);
+        when(userEntityRepository.saveAndFlush(mapped))
+                .thenThrow(new DataIntegrityViolationException("unique key violation"));
+
+        assertThrows(DuplicateUserException.class, () -> userService.addUser(input));
     }
 
     @Test

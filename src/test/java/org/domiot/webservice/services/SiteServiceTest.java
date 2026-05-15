@@ -16,13 +16,14 @@ import java.util.Optional;
 import org.domiot.webservice.repositories.SiteRespository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.lankheet.domiot.entities.SiteEntity;
-import org.lankheet.domiot.mapper.SiteMapper;
-import org.lankheet.domiot.model.Site;
+import org.domiot.entities.SiteEntity;
+import org.domiot.mapper.SiteMapper;
+import org.domiot.model.Site;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 
 @ExtendWith(MockitoExtension.class)
 class SiteServiceTest {
@@ -48,12 +49,37 @@ class SiteServiceTest {
         Site expected = new Site();
 
         when(siteMapper.map(input)).thenReturn(mapped);
-        when(siteRepository.save(mapped)).thenReturn(saved);
+        when(siteRepository.saveAndFlush(mapped)).thenReturn(saved);
         when(siteMapper.map(saved)).thenReturn(expected);
 
         Site result = siteService.addSite(input);
 
         assertSame(expected, result);
+    }
+
+    @Test
+    void addSiteShouldThrowDuplicateWhenNameAlreadyExists() {
+        Site input = new Site();
+        SiteEntity mapped = new SiteEntity();
+        mapped.setName("site-a");
+
+        when(siteMapper.map(input)).thenReturn(mapped);
+        when(siteRepository.existsByName("site-a")).thenReturn(true);
+
+        assertThrows(DuplicateSiteException.class, () -> siteService.addSite(input));
+    }
+
+    @Test
+    void addSiteShouldTranslateDataIntegrityViolationToDuplicateSiteException() {
+        Site input = new Site();
+        SiteEntity mapped = new SiteEntity();
+        mapped.setName("site-b");
+
+        when(siteMapper.map(input)).thenReturn(mapped);
+        when(siteRepository.existsByName("site-b")).thenReturn(false);
+        when(siteRepository.saveAndFlush(mapped)).thenThrow(new DataIntegrityViolationException("unique key violation"));
+
+        assertThrows(DuplicateSiteException.class, () -> siteService.addSite(input));
     }
 
     @Test

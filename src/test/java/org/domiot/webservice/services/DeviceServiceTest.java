@@ -4,10 +4,10 @@ import org.domiot.webservice.repositories.DeviceEntityRepository;
 import org.domiot.webservice.repositories.SiteRespository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.lankheet.domiot.entities.DeviceEntity;
-import org.lankheet.domiot.entities.SiteEntity;
-import org.lankheet.domiot.mapper.DeviceMapper;
-import org.lankheet.domiot.model.Device;
+import org.domiot.entities.DeviceEntity;
+import org.domiot.entities.SiteEntity;
+import org.domiot.mapper.DeviceMapper;
+import org.domiot.model.Device;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -73,6 +74,41 @@ class DeviceServiceTest {
 		assertSame(expected, result);
 		assertSame(siteEntity, mappedEntity.getSiteEntity());
 		verify(deviceEntityRepository).saveAll(mappedEntities);
+	}
+
+	@Test
+	void addDevicesShouldThrowDuplicateWhenMacAlreadyExists() {
+		Long siteId = 1L;
+		SiteEntity siteEntity = new SiteEntity();
+		List<Device> inputDevices = List.of(new Device());
+		DeviceEntity mappedEntity = new DeviceEntity();
+		mappedEntity.setMacAddress("AA:BB:CC:DD");
+		List<DeviceEntity> mappedEntities = List.of(mappedEntity);
+
+		when(siteRepository.findById(siteId)).thenReturn(Optional.of(siteEntity));
+		when(deviceMapper.mapToEntities(inputDevices)).thenReturn(mappedEntities);
+		when(deviceEntityRepository.existsByMacAddress("AA:BB:CC:DD")).thenReturn(true);
+
+		assertThrows(DuplicateDeviceException.class, () -> deviceService.addDevices(siteId, inputDevices));
+		verify(deviceEntityRepository, never()).saveAll(any());
+	}
+
+	@Test
+	void addDevicesShouldThrowDuplicateWhenRequestContainsSameMacTwice() {
+		Long siteId = 1L;
+		SiteEntity siteEntity = new SiteEntity();
+		List<Device> inputDevices = List.of(new Device(), new Device());
+		DeviceEntity firstMapped = new DeviceEntity();
+		firstMapped.setMacAddress("11:22:33:44");
+		DeviceEntity secondMapped = new DeviceEntity();
+		secondMapped.setMacAddress("11:22:33:44");
+		List<DeviceEntity> mappedEntities = List.of(firstMapped, secondMapped);
+
+		when(siteRepository.findById(siteId)).thenReturn(Optional.of(siteEntity));
+		when(deviceMapper.mapToEntities(inputDevices)).thenReturn(mappedEntities);
+
+		assertThrows(DuplicateDeviceException.class, () -> deviceService.addDevices(siteId, inputDevices));
+		verify(deviceEntityRepository, never()).saveAll(any());
 	}
 
 	@Test

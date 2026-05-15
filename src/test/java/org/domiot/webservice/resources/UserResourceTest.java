@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -37,14 +38,11 @@ class UserResourceTest {
     }
 
     @Test
-    void addUserShouldReturnConflictWhenServiceThrowsDuplicateUserException() {
+    void addUserShouldPropagateDuplicateWhenServiceThrowsDuplicateUserException() {
         User input = new User();
         when(userService.addUser(input)).thenThrow(new DuplicateUserException("duplicate"));
 
-        ResponseEntity<User> response = userResource.addUser(input);
-
-        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
-        assertNull(response.getBody());
+        assertThrows(DuplicateUserException.class, () -> userResource.addUser(input));
     }
 
     @Test
