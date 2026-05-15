@@ -1,10 +1,9 @@
 package org.domiot.webservice.resources;
 
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.domiot.webservice.services.SiteService;
-import org.lankheet.domiot.api.SiteApi;
-import org.lankheet.domiot.model.Site;
+import org.domiot.api.SiteApi;
+import org.domiot.model.Site;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,7 +20,7 @@ public class SiteResource implements SiteApi {
     }
 
     @Override
-    public ResponseEntity<Site> addSite(@Valid Site site) {
+    public ResponseEntity<Site> addSite(Site site) {
         if (site == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -42,7 +41,7 @@ public class SiteResource implements SiteApi {
     }
 
     @Override
-    public ResponseEntity<Site> updateSite(Long siteId, @Valid Site site) {
+    public ResponseEntity<Site> updateSite(Long siteId, Site site) {
         if (site == null) {
             return ResponseEntity.badRequest().build();
         }

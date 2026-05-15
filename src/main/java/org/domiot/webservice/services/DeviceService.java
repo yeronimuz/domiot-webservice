@@ -1,17 +1,21 @@
 package org.domiot.webservice.services;
 
-import lombok.extern.slf4j.Slf4j;
-import org.domiot.webservice.repositories.DeviceEntityRepository;
-import org.domiot.webservice.repositories.SiteRespository;
-import org.lankheet.domiot.entities.DeviceEntity;
-import org.lankheet.domiot.entities.SiteEntity;
-import org.lankheet.domiot.mapper.DeviceMapper;
-import org.lankheet.domiot.model.Device;
-import org.springframework.stereotype.Service;
-
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
+import lombok.extern.slf4j.Slf4j;
+
+import org.domiot.webservice.repositories.DeviceEntityRepository;
+import org.domiot.webservice.repositories.SiteRespository;
+import org.domiot.entities.DeviceEntity;
+import org.domiot.entities.SiteEntity;
+import org.domiot.mapper.DeviceMapper;
+import org.domiot.model.Device;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -38,10 +42,28 @@ public class DeviceService {
                 .orElseThrow(() -> new IllegalArgumentException("Unknown siteId: " + siteId));
 
         List<DeviceEntity> mappedEntities = deviceMapper.mapToEntities(deviceList);
+        Set<String> seenMacAddresses = new HashSet<>();
+        for (DeviceEntity mappedEntity : mappedEntities) {
+            String macAddress = mappedEntity.getMacAddress();
+            if (macAddress == null || macAddress.isBlank()) {
+                continue;
+            }
+            if (!seenMacAddresses.add(macAddress)) {
+                throw new DuplicateDeviceException("Duplicate macAddress in request: " + macAddress);
+            }
+            if (deviceEntityRepository.existsByMacAddress(macAddress)) {
+                throw new DuplicateDeviceException("A device with this macAddress already exists: " + macAddress);
+            }
+        }
         mappedEntities.forEach(deviceEntity -> deviceEntity.setSiteEntity(site));
 
-        List<DeviceEntity> deviceEntities = deviceEntityRepository.saveAll(mappedEntities);
-        return deviceMapper.mapToDto(deviceEntities);
+        try {
+            List<DeviceEntity> deviceEntities = deviceEntityRepository.saveAll(mappedEntities);
+            return deviceMapper.mapToDto(deviceEntities);
+        } catch (DataIntegrityViolationException ex) {
+            // Covers races where another request inserts the same unique value between check and insert.
+            throw new DuplicateDeviceException("One or more devices violate uniqueness constraints", ex);
+        }
     }
 
     public List<Device> getDevice(Long siteId, Long deviceId) {

@@ -2,8 +2,8 @@ package org.domiot.webservice.resources;
 
 import lombok.extern.slf4j.Slf4j;
 import org.domiot.webservice.services.UserService;
-import org.lankheet.domiot.api.UserApi;
-import org.lankheet.domiot.model.User;
+import org.domiot.api.UserApi;
+import org.domiot.model.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,7 +24,7 @@ public class UserResource implements UserApi {
         if (user == null) {
             return ResponseEntity.badRequest().build();
         }
-        log.info("Creating user");
+        log.info("Creating user: {}", user);
         return ResponseEntity.ok(userService.addUser(user));
     }
 

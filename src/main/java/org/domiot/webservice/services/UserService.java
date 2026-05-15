@@ -2,9 +2,10 @@ package org.domiot.webservice.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.domiot.webservice.repositories.UserEntityRepository;
-import org.lankheet.domiot.entities.UserEntity;
-import org.lankheet.domiot.mapper.UserMapper;
-import org.lankheet.domiot.model.User;
+import org.domiot.entities.UserEntity;
+import org.domiot.mapper.UserMapper;
+import org.domiot.model.User;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,9 +27,22 @@ public class UserService {
         if (user == null) {
             throw new IllegalArgumentException("user cannot be null");
         }
+
         UserEntity mapped = userMapper.map(user);
-        UserEntity saved = userEntityRepository.save(mapped);
-        return userMapper.map(saved);
+        if (mapped.getEmail() != null && userEntityRepository.existsByEmail(mapped.getEmail())) {
+            throw new DuplicateUserException("A user with this email already exists");
+        }
+        if (mapped.getUserName() != null && userEntityRepository.existsByUserName(mapped.getUserName())) {
+            throw new DuplicateUserException("A user with this username already exists");
+        }
+
+        try {
+            UserEntity saved = userEntityRepository.saveAndFlush(mapped);
+            return userMapper.map(saved);
+        } catch (DataIntegrityViolationException ex) {
+            // Covers races where another request inserts the same unique value between check and insert.
+            throw new DuplicateUserException("A user with the same unique fields already exists", ex);
+        }
     }
 
     public Optional<User> getUser(Long userId) {

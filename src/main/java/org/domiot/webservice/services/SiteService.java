@@ -2,9 +2,10 @@ package org.domiot.webservice.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.domiot.webservice.repositories.SiteRespository;
-import org.lankheet.domiot.entities.SiteEntity;
-import org.lankheet.domiot.mapper.SiteMapper;
-import org.lankheet.domiot.model.Site;
+import org.domiot.entities.SiteEntity;
+import org.domiot.mapper.SiteMapper;
+import org.domiot.model.Site;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,8 +26,19 @@ public class SiteService {
         if (site == null) {
             throw new IllegalArgumentException("site cannot be null");
         }
-        SiteEntity savedEntity = siteRepository.save(siteMapper.map(site));
-        return siteMapper.map(savedEntity);
+
+        SiteEntity mapped = siteMapper.map(site);
+        if (mapped.getName() != null && siteRepository.existsByName(mapped.getName())) {
+            throw new DuplicateSiteException("A site with this name already exists");
+        }
+
+        try {
+            SiteEntity savedEntity = siteRepository.saveAndFlush(mapped);
+            return siteMapper.map(savedEntity);
+        } catch (DataIntegrityViolationException ex) {
+            // Covers races where another request inserts the same unique value between check and insert.
+            throw new DuplicateSiteException("A site with the same unique fields already exists", ex);
+        }
     }
 
     public Optional<Site> getSite(Long siteId) {

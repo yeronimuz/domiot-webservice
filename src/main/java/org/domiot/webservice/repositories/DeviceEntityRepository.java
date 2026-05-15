@@ -1,6 +1,6 @@
 package org.domiot.webservice.repositories;
 
-import org.lankheet.domiot.entities.DeviceEntity;
+import org.domiot.entities.DeviceEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,6 +13,8 @@ import java.util.Optional;
 @Repository
 public interface DeviceEntityRepository extends JpaRepository<DeviceEntity, Long> {
     DeviceEntity findByMacAddress(String macAddress);
+
+    boolean existsByMacAddress(String macAddress);
 
     List<DeviceEntity> findBySiteEntityId(Long siteId);
 

@@ -2,8 +2,8 @@ package org.domiot.webservice.resources;
 
 import lombok.extern.slf4j.Slf4j;
 import org.domiot.webservice.services.DeviceService;
-import org.lankheet.domiot.api.DeviceApi;
-import org.lankheet.domiot.model.Device;
+import org.domiot.api.DeviceApi;
+import org.domiot.model.Device;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
