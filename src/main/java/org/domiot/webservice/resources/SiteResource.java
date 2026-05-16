@@ -5,6 +5,7 @@ import org.domiot.webservice.services.SiteService;
 import org.domiot.api.SiteApi;
 import org.domiot.model.Site;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class SiteResource implements SiteApi {
     }
 
     @Override
-    public ResponseEntity<Site> addSite(Site site) {
+    public ResponseEntity<Site> addSite(@RequestBody(required = false) Site site) {
         if (site == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -41,7 +42,7 @@ public class SiteResource implements SiteApi {
     }
 
     @Override
-    public ResponseEntity<Site> updateSite(Long siteId, Site site) {
+    public ResponseEntity<Site> updateSite(Long siteId, @RequestBody(required = false) Site site) {
         if (site == null) {
             return ResponseEntity.badRequest().build();
         }

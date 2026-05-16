@@ -5,6 +5,7 @@ import org.domiot.webservice.services.UserService;
 import org.domiot.api.UserApi;
 import org.domiot.model.User;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class UserResource implements UserApi {
     }
 
     @Override
-    public ResponseEntity<User> addUser(User user) {
+    public ResponseEntity<User> addUser(@RequestBody(required = false) User user) {
         if (user == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -36,7 +37,7 @@ public class UserResource implements UserApi {
     }
 
     @Override
-    public ResponseEntity<List<User>> updateUser(Long userId, User user) {
+    public ResponseEntity<List<User>> updateUser(Long userId, @RequestBody(required = false) User user) {
         if (user == null) {
             return ResponseEntity.badRequest().build();
         }

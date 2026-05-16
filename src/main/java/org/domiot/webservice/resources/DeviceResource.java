@@ -6,6 +6,7 @@ import org.domiot.api.DeviceApi;
 import org.domiot.model.Device;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
@@ -23,7 +24,7 @@ public class DeviceResource implements DeviceApi {
     }
 
     @Override
-    public ResponseEntity<List<Device>> addDevices(Long siteId, List<Device> deviceList) {
+    public ResponseEntity<List<Device>> addDevices(Long siteId, @RequestBody(required = false) List<Device> deviceList) {
         log.info("Adding {} devices for siteId={}", deviceList == null ? 0 : deviceList.size(), siteId);
         try {
             return ResponseEntity.ok(this.deviceService.addDevices(siteId, deviceList));
@@ -47,13 +48,13 @@ public class DeviceResource implements DeviceApi {
         try {
             return ResponseEntity.ok(this.deviceService.getSiteDevices(asLong(siteId)));
         } catch (ArithmeticException ex) {
-            log.warn("Received non-integer siteId value: {}", siteId);
+            log.warn("Received non-integer siteId value: {} ({})", siteId, ex.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
 
     @Override
-    public ResponseEntity<List<Device>> updateDevice(Long siteId, Object deviceId, Device device) {
+    public ResponseEntity<List<Device>> updateDevice(Long siteId, Object deviceId, @RequestBody(required = false) Device device) {
         try {
             List<Device> updated = this.deviceService.updateDevice(siteId, asLong(deviceId), device);
             return ResponseEntity.ok(updated);
